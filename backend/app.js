@@ -22,15 +22,17 @@ app.use((req, res, next)=>{
 
 app.post('/api/subjects',(req, res, next) =>{
     // const subject=req.body;
-    // console.log(req.body);
+    console.log(req.body);
     const subject=new Subject({
         subjectAadhar: req.body.subjectAadhar,
         subjectName: req.body.subjectName
     });
     subject.save().then(createdSubject=>{
+        console.log("subject added success")
+        console.log(createdSubject._id)
         res.status(201).json({
             message:"Subject added successfully!",
-            postId: createdSubject._id
+            subjectId: createdSubject._id
         });
     })
     .catch(()=>{
@@ -58,6 +60,36 @@ app.delete('/api/subjects/:id',(req, res, next)=>{
     .catch(()=>{
         console.log("Subject is not deleted")
     })
+});
+
+app.put("/api/subjects/:id",(req, res, next)=>{
+    const subject = new Subject({
+        _id:req.body._id,
+        subjectAadhar: req.body.subjectAadhar,
+        subjectName: req.body.subjectName
+    })
+    Subject.updateOne({_id:req.params.id}, subject)
+        .then(result=>{
+            console.log(result)
+            res.status(200).json({message:"Subject updated successfully!"});
+        })
+        .catch(()=>{
+            console.log("Subject not updated")
+        })
+});
+
+app.get('/api/subjects/:id',(req, res, next)=>{
+    Subject.findById(req.params.id)
+        .then(subject=>{
+            if(subject){
+                res.status(200).json(subject)
+            }else{
+                res.status(404).json({message:"Subject not found"});
+            }
+        })
+        .catch(()=>{
+            console.log("Found error in getting a subject by ID")
+        })
 });
 
 app.use((req, res, next)=>{
