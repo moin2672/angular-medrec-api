@@ -1,6 +1,8 @@
 const express = require('express');
-
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 //middleware
 app.use((req, res, next)=>{
@@ -9,6 +11,12 @@ app.use((req, res, next)=>{
     res.setHeader('Access-Control-Allow-Methods','GET, POST, PUT, PATCH, DELETE, OPTIONS');
     next()
 });
+
+app.post('/api/subjects',(req, res, next) =>{
+    const subject=req.body;
+    console.log(req.body);
+    res.status(201).json({message:"Subject added successfully!"});
+})
 
 app.use('/api/subjects',(req, res, next)=>{
     const subjects=[{id:"asdfasdf3w423",subjectAadhar:"title", subjectName: "content"},{id:"qwerqew798798wer",subjectAadhar:"title", subjectName: "content"},{id:"adssf7687hkh",subjectAadhar:"title", subjectName: "content"}];
