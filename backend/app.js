@@ -1,4 +1,7 @@
 const express = require('express');
+
+const Subject = require('./models/subject');
+
 const app = express();
 
 app.use(express.json());
@@ -13,8 +16,12 @@ app.use((req, res, next)=>{
 });
 
 app.post('/api/subjects',(req, res, next) =>{
-    const subject=req.body;
-    console.log(req.body);
+    // const subject=req.body;
+    // console.log(req.body);
+    const subject=new Subject({
+        subjectAadhar: req.body.subjectAadhar,
+        subjectName: req.body.subjectName
+    });
     res.status(201).json({message:"Subject added successfully!"});
 })
 
