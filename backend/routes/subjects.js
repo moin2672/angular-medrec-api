@@ -28,11 +28,26 @@ router.post('',(req, res, next) =>{
 })
 
 router.get('',(req, res, next)=>{
-    Subject.find()
+    
+    const pageSize=+req.query.pagesize;
+    const currentPage= +req.query.currentpage;
+    const subjectQuery=Subject.find();
+    let fetchedSubjects;
+    if(pageSize && currentPage){
+        subjectQuery
+            .skip(pageSize*(currentPage-1))
+            .limit(pageSize)
+    }
+    subjectQuery
         .then(documents=>{
+            fetchedSubjects=documents;
+            return Subject.count();
+        })
+        .then(count=>{
             res.status(200).json({
                 message:"Subject fetched successfully", 
-                subjects:documents
+                subjects:fetchedSubjects,
+                maxSubjects:count
             });
         })
         .catch(()=>{console.log("Unable to get documents")});
