@@ -2,6 +2,7 @@ const express = require('express');
 const mogoose = require("mongoose");
 
 const subjectRoutes = require("./routes/subjects");
+const userRoutes = require("./routes/users");
 
 const app = express();
 
@@ -21,7 +22,7 @@ app.use((req, res, next)=>{
 });
 
 app.use("/api/subjects",subjectRoutes);
-
+app.use("/api/users",userRoutes);
 
 
 app.use((req, res, next)=>{
