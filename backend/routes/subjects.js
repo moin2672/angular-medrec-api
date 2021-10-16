@@ -24,8 +24,8 @@ router.post('',checkAuth,(req, res, next) =>{
             }
         });
     })
-    .catch(()=>{
-        console.log("Subject NOT saved")
+    .catch(error=>{
+        res.status(500).json({message:'Creating a Subject failed!'})
     });
 })
 
@@ -52,7 +52,9 @@ router.get('',(req, res, next)=>{
                 maxSubjects:count
             });
         })
-        .catch(()=>{console.log("Unable to get documents")});
+        .catch(error=>{
+            res.status(500).json({message:'Fetching Subjects failed!'})
+        });
 });
 
 router.delete('/:id',checkAuth,(req, res, next)=>{
@@ -65,16 +67,17 @@ router.delete('/:id',checkAuth,(req, res, next)=>{
             res.status(401).json({message:"Not Authorized"})
         }
     })
-    .catch(()=>{
-        console.log("Subject is not deleted")
-    })
+    .catch(error=>{
+        res.status(500).json({message:'Deleting the post failed!'})
+    });
 });
 
 router.put("/:id",checkAuth,(req, res, next)=>{
     const subject = new Subject({
         _id:req.body._id,
         subjectAadhar: req.body.subjectAadhar,
-        subjectName: req.body.subjectName
+        subjectName: req.body.subjectName,
+        creator:req.userData.userId
     })
     Subject.updateOne({_id:req.params.id,creator: req.userData.userId}, subject)
         .then(result=>{
@@ -85,9 +88,9 @@ router.put("/:id",checkAuth,(req, res, next)=>{
                 res.status(401).json({message:"Not Authorized"})
             }
         })
-        .catch(()=>{
-            console.log("Subject not updated")
-        })
+        .catch(error=>{
+            res.status(500).json({message:'Updating a Subject failed!'})
+        });
 });
 
 router.get('/:id',checkAuth,(req, res, next)=>{
@@ -99,9 +102,9 @@ router.get('/:id',checkAuth,(req, res, next)=>{
                 res.status(404).json({message:"Subject not found"});
             }
         })
-        .catch(()=>{
-            console.log("Found error in getting a subject by ID")
-        })
+        .catch(error=>{
+            res.status(500).json({message:'Fetching post failed!'})
+        });
 });
 
 module.exports=router;
