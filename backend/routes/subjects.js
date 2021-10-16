@@ -3,13 +3,15 @@ const express =  require('express');
 const router=express.Router();
 
 const Subject = require('../models/subject');
+const checkAuth= require("../middleware/check-auth");
 
-router.post('',(req, res, next) =>{
+router.post('',checkAuth,(req, res, next) =>{
     // const subject=req.body;
     console.log(req.body);
     const subject=new Subject({
         subjectAadhar: req.body.subjectAadhar,
-        subjectName: req.body.subjectName
+        subjectName: req.body.subjectName,
+        creator:req.userData.userId
     });
     subject.save().then(createdSubject=>{
         console.log("subject added success")
@@ -53,34 +55,42 @@ router.get('',(req, res, next)=>{
         .catch(()=>{console.log("Unable to get documents")});
 });
 
-router.delete('/:id',(req, res, next)=>{
-    Subject.deleteOne({_id:req.params.id})
+router.delete('/:id',checkAuth,(req, res, next)=>{
+    Subject.deleteOne({_id:req.params.id, creator: req.userData.userId})
     .then(result=>{
         console.log(result);
-        res.status(200).json({message:"Subject Deleted!"})
+        if(result.n>0){
+            res.status(200).json({message:"Post Deleted successfully!"});
+        }else{
+            res.status(401).json({message:"Not Authorized"})
+        }
     })
     .catch(()=>{
         console.log("Subject is not deleted")
     })
 });
 
-router.put("/:id",(req, res, next)=>{
+router.put("/:id",checkAuth,(req, res, next)=>{
     const subject = new Subject({
         _id:req.body._id,
         subjectAadhar: req.body.subjectAadhar,
         subjectName: req.body.subjectName
     })
-    Subject.updateOne({_id:req.params.id}, subject)
+    Subject.updateOne({_id:req.params.id,creator: req.userData.userId}, subject)
         .then(result=>{
             console.log(result)
-            res.status(200).json({message:"Subject updated successfully!"});
+            if(result.n>0){
+                res.status(200).json({message:"Post updated successfully!"});
+            }else{
+                res.status(401).json({message:"Not Authorized"})
+            }
         })
         .catch(()=>{
             console.log("Subject not updated")
         })
 });
 
-router.get('/:id',(req, res, next)=>{
+router.get('/:id',checkAuth,(req, res, next)=>{
     Subject.findById(req.params.id)
         .then(subject=>{
             if(subject){
