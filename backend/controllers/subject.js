@@ -33,8 +33,11 @@ exports.updateSubject=(req, res, next)=>{
     })
     Subject.updateOne({_id:req.params.id,creator: req.userData.userId}, subject)
         .then(result=>{
+            console.log("updateSubject")
             console.log(result)
-            if(result.n>0){
+            // if(result.modifiedCount>0)
+            //if(result.acknowledged)
+            if(result.matchedCount>0){
                 res.status(200).json({message:"Subject updated successfully!"});
             }else{
                 res.status(401).json({message:"Not Authorized"})
@@ -90,8 +93,9 @@ exports.getSubject=(req, res, next)=>{
 exports.deleteSubject=(req, res, next)=>{
     Subject.deleteOne({_id:req.params.id, creator: req.userData.userId})
     .then(result=>{
-        console.log(result);
-        if(result.n>0){
+        // console.log("onDelete")
+        // console.log(result);
+        if(result.deletedCount>0){
             res.status(200).json({message:"Subject Deleted successfully!"});
         }else{
             res.status(401).json({message:"Not Authorized"})
