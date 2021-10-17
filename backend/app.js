@@ -6,7 +6,7 @@ const userRoutes = require("./routes/users");
 
 const app = express();
 
-mogoose.connect("mongodb+srv://shafmoin:oOdRnO3aBwTXsNCZ@cluster0.qmsyy.mongodb.net/medrec", { useNewUrlParser: true, useUnifiedTopology: true })
+mogoose.connect("mongodb+srv://shafmoin:"+process.env.MONGO_ALTAS_PW+"@cluster0.qmsyy.mongodb.net/medrec", { useNewUrlParser: true, useUnifiedTopology: true })
         .then(()=>{console.log("Connected to Database")})
         .catch(()=>{console.log("Db connection failed!")});
 
